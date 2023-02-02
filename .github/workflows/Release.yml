@@ -56,7 +56,7 @@ jobs:
     env:
       Solution_Name: WpfApp1.sln
       Product_Name: WpfApp1
-          
+      
       #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
       #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
       #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
@@ -121,7 +121,7 @@ jobs:
       id: create_release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        GITHUB_TOKEN: ${{ secrets.MY_ACCESS_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
         tag_name: ${{ github.ref}}
         release_name: Release ${{ github.ref_name }}.${{ matrix.targetplatform }}
@@ -131,7 +131,7 @@ jobs:
       id: upload-release-asset-sdk
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.MY_ACCESS_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}  # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         asset_path: .\ReleaseWorkSpace\${{ env.Product_Name }}.zip 
