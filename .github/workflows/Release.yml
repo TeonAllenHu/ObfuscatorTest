@@ -98,7 +98,7 @@ jobs:
     - name: Remove File
       uses: JesseTG/rm@v1.0.0
       with:
-        path: ReleaseWorkSpace/ReleaseData/win-x64/WpfApp1.dll
+        path: '.\ReleaseWorkSpace\ReleaseData\win-x64\WpfApp1.dll'
 
     # move the confused library
     - name: Move the confused library
