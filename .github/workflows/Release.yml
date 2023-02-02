@@ -61,7 +61,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        token: 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
+        token: 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
         fetch-depth: 0
 
     # Install the .NET Core workload
