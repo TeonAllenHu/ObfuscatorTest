@@ -3,6 +3,7 @@
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<OutputPath>..\ReleaseWorkSpace\ReleaseData</OutputPath>
 		<OutputType>WinExe</OutputType>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 
 	<PropertyGroup>
