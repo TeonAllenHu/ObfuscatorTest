@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<OutputPath>..\ReleaseWorkSpace\ReleaseData</OutputPath>
+		<OutputType>WinExe</OutputType>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<SelfContained>false</SelfContained>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(PlatformTarget)' == 'x64'">
+		<RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+	</PropertyGroup>
+
+</Project>

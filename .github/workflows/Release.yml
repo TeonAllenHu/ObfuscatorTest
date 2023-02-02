@@ -1,0 +1,130 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# This workflow will build, test, sign and package a WPF or Windows Forms desktop application
+# built on .NET Core.
+# To learn how to migrate your existing application to .NET Core,
+# refer to https://docs.microsoft.com/en-us/dotnet/desktop-wpf/migration/convert-project-from-net-framework
+#
+# To configure this workflow:
+#
+# 1. Configure environment variables
+# GitHub sets default environment variables for every workflow run.
+# Replace the variables relative to your project in the "env" section below.
+#
+# 2. Signing
+# Generate a signing certificate in the Windows Application
+# Packaging Project or add an existing signing certificate to the project.
+# Next, use PowerShell to encode the .pfx file using Base64 encoding
+# by running the following Powershell script to generate the output string:
+#
+# $pfx_cert = Get-Content '.\SigningCertificate.pfx' -Encoding Byte
+# [System.Convert]::ToBase64String($pfx_cert) | Out-File 'SigningCertificate_Encoded.txt'
+#
+# Open the output file, SigningCertificate_Encoded.txt, and copy the
+# string inside. Then, add the string to the repo as a GitHub secret
+# and name it "Base64_Encoded_Pfx."
+# For more information on how to configure your signing certificate for
+# this workflow, refer to https://github.com/microsoft/github-actions-for-desktop-apps#signing
+#
+# Finally, add the signing certificate password to the repo as a secret and name it "Pfx_Key".
+# See "Build the Windows Application Packaging project" below to see how the secret is used.
+#
+# For more information on GitHub Actions, refer to https://github.com/features/actions
+# For a complete CI/CD sample to get started with GitHub Action workflows for Desktop Applications,
+# refer to https://github.com/microsoft/github-actions-for-desktop-apps
+
+name: Obfuscar Test
+
+on:
+  push: 
+      tags:
+      - "*.*.*.*" # Push events to matching v*, i.e. v1.0, v20.15.10
+
+jobs:
+
+  build:
+    strategy:
+      matrix:
+        configuration: [Release]
+        targetPlatform: [x64]
+        
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    env:
+      Solution_Name: WpfApp1.sln
+      Product_Name: WpfApp1
+      
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.13
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.2
+      
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: Restore the application
+      run: msbuild $env:Solution_Name /t:Restore /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration 
+      env:
+       Configuration: ${{ matrix.configuration }}
+       TargetPlatform: ${{ matrix.targetplatform }}
+      
+    # Build the Windows Application project
+    - name: Build the Windows Application Project 
+      run: msbuild $env:Solution_Name /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration -t:rebuild
+      env:
+        Configuration: ${{ matrix.configuration }}
+        TargetPlatform: ${{ matrix.targetplatform }} 
+      
+    # Add  Obfuscar
+    - name: Setup Obfuscar
+      run: dotnet tool install --global Obfuscar.GlobalTool
+      
+    # Run  Obfuscar
+    - name: Run Obfuscar
+      run: obfuscar.console ReleaseWorkSpace\obfuscarconfig.xml
+        
+    # move the confused library
+    - name: Move the confused library
+      run: move ".\ReleaseWorkSpace\Confused\WpfApp1.dll" ".\ReleaseWorkSpace\ReleaseData\WpfApp1.dll"
+      
+    # Make zip
+    - name: Create zip    
+      uses: thedoctor0/zip-release@main  
+      with:
+        type: 'zip'
+        filename: '.\ReleaseWorkSpace\${{ env.Product_Name }}.zip'
+        path: '.\ReleaseWorkSpace\ReleaseData\*'
+        
+    # Create the release:  https://github.com/actions/create-release
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref}}
+        release_name: Release ${{ github.ref_name }}.${{ matrix.targetplatform }}
+        
+    # Upload release asset:   https://github.com/actions/upload-release-asset
+    - name: Update release asset
+      id: upload-release-asset-sdk
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}  # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: .\ReleaseWorkSpace\${{ env.Product_Name }}.zip 
+        asset_name: ${{ env.Product_Name }}.zip
+        asset_content_type: application/zip
