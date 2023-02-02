@@ -97,7 +97,7 @@ jobs:
         
     # move the confused library
     - name: Move the confused library
-      run: move ".\ReleaseWorkSpace\Confused\WpfApp1.dll" ".\ReleaseWorkSpace\ReleaseData\WpfApp1.dll"
+      run: move ".\ReleaseWorkSpace\Confused\WpfApp1.dll" ".\ReleaseWorkSpace\ReleaseData\win-x64\WpfApp1.dll"
       
     # Make zip
     - name: Create zip    
@@ -105,7 +105,7 @@ jobs:
       with:
         type: 'zip'
         filename: '.\ReleaseWorkSpace\${{ env.Product_Name }}.zip'
-        path: '.\ReleaseWorkSpace\ReleaseData\*'
+        path: '.\ReleaseWorkSpace\ReleaseData\win-x64\*'
         
     # Create the release:  https://github.com/actions/create-release
     - name: Create release
