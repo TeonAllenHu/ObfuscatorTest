@@ -94,10 +94,15 @@ jobs:
     # Run  Obfuscar
     - name: Run Obfuscar
       run: obfuscar.console ReleaseWorkSpace\obfuscarconfig.xml
-        
+      
+    - name: Remove File
+      uses: actions/delete-file@v1
+      with:
+        path: ReleaseWorkSpace/ReleaseData/win-x64/WpfApp1.dll
+
     # move the confused library
     - name: Move the confused library
-      run: move /Y ".\ReleaseWorkspace\Confused\WpfApp1.dll" ".\ReleaseWorkSpace\ReleaseData\win-x64\WpfApp1.dll"
+      run: move ".\ReleaseWorkspace\Confused\WpfApp1.dll" ".\ReleaseWorkSpace\ReleaseData\win-x64\WpfApp1.dll"
       
     # Make zip
     - name: Create zip    
