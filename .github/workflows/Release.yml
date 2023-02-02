@@ -57,11 +57,13 @@ jobs:
       Solution_Name: WpfApp1.sln
       Product_Name: WpfApp1
       
+      #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
+      #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
     steps:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        token: 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
+        token: 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
         fetch-depth: 0
 
     # Install the .NET Core workload
