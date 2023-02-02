@@ -3,6 +3,4 @@
   <Var name="InPath" value=".\ReleaseWorkspace\ReleaseData\win-x64" />
   <Var name="OutPath" value=".\ReleaseWorkspace\Confused" />
   <Module file="$(InPath)\WpfApp1.dll" /> 
-  <AssemblySearchPath path="C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\6.0.13\" />
-  <AssemblySearchPath path="C:\Program Files\dotnet\shared\Microsoft.NETCore.App\6.0.13\" />
 </Obfuscator>

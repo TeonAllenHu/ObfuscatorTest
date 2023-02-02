@@ -97,7 +97,7 @@ jobs:
         
     # move the confused library
     - name: Move the confused library
-      run: move ".\ReleaseWorkSpace\Confused\WpfApp1.dll" ".\ReleaseWorkSpace\ReleaseData\win-x64\WpfApp1.dll"
+      run: move /Y ".\ReleaseWorkspace\Confused\WpfApp1.dll" ".\ReleaseWorkSpace\ReleaseData\win-x64\WpfApp1.dll"
       
     # Make zip
     - name: Create zip    
